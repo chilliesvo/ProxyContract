@@ -6,6 +6,12 @@
   "repository": "git@github.com:chilliesvo/ProxyContract.git",
   "author": "chillivo <khoavo.sound@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "compile": "npx hardhat compile",
+    "clean": "npx hardhat clean",
+    "deploy": "npx hardhat run scripts/deploy.js --network rinkeby_testnet",
+    "verify": "npx hardhat run scripts/verify.js --network rinkeby_testnet"
+  },
   "devDependencies": {
     "hardhat-gas-reporter": "^1.0.8"
   },

@@ -1,30 +1,38 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// When running the script with `npx hardhat run <script>` you'll find the Hardhat
-// Runtime Environment's members available in the global scope.
 const hre = require("hardhat");
+const fs = require("fs");
+const ethers = hre.ethers;
 
 async function main() {
-  // Hardhat always runs the compile task when running scripts with its command
-  // line interface.
-  //
-  // If this script is run directly using `node` you may want to call compile
-  // manually to make sure everything is compiled
-  // await hre.run('compile');
+  //Loading accounts
+  const accounts = await ethers.getSigners();
+  const addresses = accounts.map(item => item.address);
+  const admin = addresses[0];
 
-  // We get the contract to deploy
-  const Greeter = await hre.ethers.getContractFactory("Greeter");
-  const greeter = await Greeter.deploy("Hello, Hardhat!");
+  // Loading contract factory.
+  const Test = await ethers.getContractFactory("test");
 
-  await greeter.deployed();
+  // Deploy contracts
+  console.log("=======================================================");
+  console.log("DEPLOY CONTRACTS");
+  console.log("=======================================================");
 
-  console.log("Greeter deployed to:", greeter.address);
+  const test = await Test.deploy();
+  await test.deployed();
+  console.log("Test deployed to:", test.address);
+
+  const contractAddresses = {
+    admin: admin,
+    test: test.address
+  };
+
+  await fs.writeFileSync("contracts.json", JSON.stringify(contractAddresses));
 }
 
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+main()
+  .then(() => process.exit(0))
+  .catch(error => {
+    console.error(error);
+    process.exit(1);
+  });
